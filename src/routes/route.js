@@ -1,17 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const authorController = require("../Controller/authorController")
-const blogController = require("../Controller/blogController")
+const createAuthor = require("../Controller/authorController")
+const {createBlog ,getBlog ,filterBlogsDetails} = require("../Controller/blogController")
 
 
 
-router.post("/createAuthor", authorController.createAuthor);
-router.post("/createBlog", blogController.createBlog);
-router.get("/getBlog", blogController.getBlog);
-
-
-
-
+router.post("/createAuthor", createAuthor);
+router.post("/createBlog", createBlog);
+router.get("/getBlog", getBlog);
+router.get("/filterBlogsDetails",filterBlogsDetails)
 
 
 module.exports = router;
