@@ -5,13 +5,13 @@ const router = require("../routes/route")
 const createBlog = async function (req, res) {
     let blog = req.body;
     let blogCreated = await blogModel.create(blog)
-    res.send({data: blogCreated})
+    res.send({ data: blogCreated })
 }
 
-const getBlog = async function(req, res) {
-let blogs = await blogModel.find().populate('authorId')
-res.send({data:blogs})
+const getBlog = async function (req, res) {
+    let blogs = await blogModel.find().populate('authorId')
+    res.send({ data: blogs })
 
 }
-module.exports.createBlog=createBlog
-module.exports.getBlog=getBlog
+module.exports.createBlog = createBlog
+module.exports.getBlog = getBlog
