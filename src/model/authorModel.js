@@ -13,10 +13,10 @@ const authorSchema=new mongoose.Schema({
         required:true,
         enum:["Mr", "Mrs", "Miss"]
     },
-    email:{
-        type:String,
+   email:{
+       type:String,
         required:true,
-        unique:true
+       unique:true
     },
     password:{
         type:String,
