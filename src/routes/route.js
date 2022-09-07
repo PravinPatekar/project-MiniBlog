@@ -1,23 +1,17 @@
-const express=require('express');
-const router=express.Router();
-const authorController=require('../controller/authorController')
-const blogController=require('../controller/blogController')
-// const middleWare = require("../Middleware/middleWare")
+const express = require("express");
+const router = express.Router();
+const authorController = require("../Controller/authorController")
+const blogController = require("../Controller/blogController")
 
-// APIs
-router.post('/authors', authorController.createAuthor)  
 
-router.post("/blogs",  blogController.createBlog)
 
-router.post("/login", authorController.authorLogin) 
+router.post("/authors", authorController.createAuthor);
+router.post("/createBlog", blogController.createBlog);
+router.get("/getBlog", blogController.blogsDetails);
+router.put("/blogs/:blogId", blogController.updateBlog);
+router.delete("/blogs/:blogId", blogController.deleteBlogByParams)
+router.delete("/blogs", blogController.deleteBlogByQuery)
 
-router.get("/blogs",   blogController.getBlogs)  
 
-router.put("/blogs/:blogId",  blogController.updateBlogs)
-
-router.delete("/blogs/:blogId", blogController.deleteByBlogId) 
-
-router.delete("/blogs", blogController.deleteByQueryParams)  
- 
 
 module.exports = router;
