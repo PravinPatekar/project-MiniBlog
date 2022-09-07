@@ -114,56 +114,33 @@ const deleteBlogByParams = async function (req, res) {
 
 const deleteBlogByQuery = async function (req, res) {
   try {
-    let data = req.query;
-    let size = Object.entries(data).length
-    if (size<1) {
-      return res.status(400).send({ status: false, msg: "Query params not given" });
-    }
-    let blog = await blogModel.find(data);
-    if (blog.length<1) {
-      return res.status(404).send({ status: false, msg: "Blog doesn't exist" });
-    }
-    for (i in blog) {
-      await blogModel.updateOne(
-        {isDeleted: false },
-        { $set: { isDeleted: true, deletedAt: moment().format() } },
-        { new: true }
-      );
-    }
-    return res.status(200).send({ status: true, msg: "Blog Deleted Successfully" });
-  }
-  catch (err) {
-    return res.status(500).send({ status: false, msg: err.message });
-  }
-};
+      let data = req.query;
+      let size = Object.entries(data).length;
 
-const eleteBlogByQuery = async function (req, res) {
-  try {
-    let data = req.query;
-    let checkDetails = await blogModel.find(data);
-    if (checkDetails.length < 1) {
-      return res.status(404).send({ status: false, msg: "Blog doesn't exist" });
-    }
-    let updateDetails = []
-    for (i in checkDetails) {
-      if (checkDetails[i].isDeleted === true) {
-        i++;
+      if (size < 1) {
+          return res
+              .status(400)
+              .send({ status: false, msg: "Query params not given" });
       }
-      await blogModel.updateOne(
-        { isDeleted: false },
-        { $set: { isDeleted: true, deletedAt: moment().format() } },
-        { new: true }
+      data.isDeleted = false
+      data.isPublished = false
+      let blog = await blogModel.find(data)
+      let count = 0;
+      const deleteBlog = await blogModel.updateMany(
+          data,
+          {
+              isDeleted: true,
+              deletedAt: Date(),
+          }
       );
-      let details = await blogModel.findById(checkDetails[i]._id);
-      updateDetails.push(details)
-
-    }
-    return res.status(200).send({ status: true, msg: updateDetails });
-  }
-  catch (err) {
-    return res.status(500).send({ status: false, msg: err.message });
+      if (count == blog.length) {
+          return res.status(200).send({
+              status: true,
+          });
+      }
+  } catch (err) {
+      return res.status(500).send({ status: false, msg: err.message });
   }
 };
-
 
 module.exports = { createBlog, blogsDetails, updateBlog, deleteBlogByParams, deleteBlogByQuery };

@@ -1,61 +1,38 @@
 const authorModel = require("../model/authorModel")
-// const {isValid,} = require("../middleware/validation")
-
+const jwt = require('jsonwebtoken')
 const createAuthor = async function (req, res) {
-  try {
-    let Author = req.body;
-    let fname = req.body.fname;
-    if (!fname) {
-      return res
-        .status(400)
-        .send({ status: false, msg: "please enter First name" });
+    try {
+        let data = req.body
+        let saveData = await authorModel.create(data)
+        res.status(200).send({ msg: saveData })
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ msg: err.message })
     }
+}
 
-    let lname = req.body.lname;
-    if (!lname) {
-      return res
-        .status(400)
-        .send({ status: false, msg: "please enter Last name" });
-    }
+const login = async function (req, res) {
 
-    let title = req.body.title;
-    if (!title) {
-      return res
-        .status(400)
-        .send({ status: false, msg: "please enter Last title" });
-    }
+    try {
+        const data = req.body;
 
-    let email = req.body.email;
-    let emailCheck = await authorModel.findOne({ email });
+        if (!data.email) { return res.status(400).send({ status: false, msg: "Email is mandatory" }) }
 
-    if (emailCheck) {
-      return res.status(400).send({
-        status: false,
-        msg: `${email} email address is already registered`,
-      });
-    }
-    if (!email) {
-      return res.status(400).send({ status: false, msg: "please enter email" });
-    }
+        if (!data.password) { return res.status(400).send({ status: false, msg: "Password is mandatory" }) }
 
-    let password = req.body.password;
-    if (!password) {
-      return res
-        .status(400)
-        .send({ status: false, msg: "please enter password" });
-    }
+        const user = await authorModel.findOne({ email: data.email });
 
-    const regex = /^([a-zA-Z0-9\.-]+)@([a-zA-Z0-9-]+).([a-z]+)$/; //using regex we will verify the email is valid or not
-    if (regex.test(email)) {
-      let authorCreated = await authorModel.create(Author);
-      res.status(201).send({ data: authorCreated });
-    }
-    else {
-        res.status(400).send({ msg: "Enter Vaild Email" })
-    }
-  } catch (error) {
-    res.status(500).send({ status: false, msg: error.message });
-  }
-};
+        if (!user) { return res.status(404).send({ status: false, msg: "User not found" }) }
 
-module.exports.createAuthor = createAuthor;
+        if (user.password != data.password) { return res.status(404).send({ status: false, msg: "Plz enter correct password" }) }
+
+        const token = jwt.sign({ email: user.email, password: user.password, authorId: user["_id"]}, "project-blog team 67")
+
+        return res.status(200).send({ status: true, msg: token })
+    }
+    catch (err) {
+        return res.status(500).send({ status: true, msg: err.message })
+    }
+}
+
+module.exports = { createAuthor, login }
