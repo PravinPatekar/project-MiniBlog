@@ -195,7 +195,7 @@ const deleteBlogByParams = async function(req, res) {
         }, {
             $set: {
                 isDeleted: true,
-                deletedAt: Date()
+                deleteAt: Date()
             }
         });
 
@@ -228,7 +228,7 @@ const deleteBlogByQuery = async function(req, res) {
 
         let deletedBlog = await blogModel.updateMany(data, {
             isDeleted: true,
-            deletedAt: Date(),
+            deleteAt: Date(),
         });
         if (deletedBlog.modifiedCount == 0) {
             return res.status(404).send({

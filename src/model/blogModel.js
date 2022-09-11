@@ -35,7 +35,7 @@ const blogSchema = new mongoose.Schema({
             type: Boolean,
             default: false
         },
-        deletedAt: {
+        deleteAt: {
             type: String,
             default: ""
         }
@@ -46,4 +46,4 @@ const blogSchema = new mongoose.Schema({
 
 )
 
-module.exports = mongoose.model("blog", blogSchema)
+module.exports = mongoose.model("project1_Blog", blogSchema)

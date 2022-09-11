@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const authorController = require("../controller/authorController")
 const blogController= require('../controller/blogController')
-const middleware= require("../middleware/auth")
+const middleware= require("../middleware/validation")
 
 
 
