@@ -1,5 +1,5 @@
 {
-  "name": "src",
+  "name": "mini blogging site",
   "version": "1.0.0",
   "description": "Backend cohort for Plutonium(July-Nov)",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon src/index.js"
   },
-  "author": "",
+  "author": "Patekar Pravin, Pal Anand, Sharma Anamika, Singh Gajendra",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
