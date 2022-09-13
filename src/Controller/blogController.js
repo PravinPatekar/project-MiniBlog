@@ -1,6 +1,7 @@
 const blogModel = require("../model/blogModel");
 const authorModel = require("../model/authorModel");
 const { isValid } = require("./authorController");
+const moment = require("moment");
 
 // create blog api
 const createBlog = async function (req, res) {
@@ -75,99 +76,73 @@ const blogsDetails = async function (req, res) {
 };
 
 //update blog api
-const updateBlog = async function (req, res) {
+const updateBlog = async function(req, res) {
   try {
-    const filterQuery = req.body;
-    
-    if (Object.entries(filterQuery).length == 0) {
-      return res.send({
-        status: false,
-        msg: "Please provide details to be updated",
-      });
-    }
 
-    const blogId = req.params.blogId;
-    const isValidBlog = await blogModel.findById(blogId);
-
-    if (isValidBlog.isDeleted == true) {
-      return res.status(404).send({
-        status: false,
-        msg: "Blog Already Deleted",
-      });
-    }
-
-    if (isValidBlog.isPublished == true) {
-      return res.status(404).send({
-        status: false,
-        msg: "Blog is already published",
-      });
-    }
-
-    if (isValid(filterQuery.title)) {
-      filterQuery["title"] = filterQuery.title.trim();
-    }
-    if(filterQuery.title==""){
-        return res.send({
-            status: false,
-            msg: "Please provide details to be updated",
-
-        });
-    }
-    if (isValid(filterQuery.body)) {
-      filterQuery["body"] = filterQuery.body.trim();
-    }
-    if(filterQuery.body==""){
-        return res.send({
-            status: false,
-            msg: "Please provide details to be updated",
-
-        });
-    }
-
-    if (isValid(filterQuery.tags)) {
-      const tag = filterQuery.tags.split(",").map((tag) => tag);
-      filterQuery["tags"] = tag;
-    }
-
-    if (isValid(filterQuery.subcategory)) {
-      const subcat = filterQuery.subcategory.split(",").map((subcat) => subcat);
-      filterQuery["subcategory"] = subcat;
-    }
-
-    const update_Blog = await blogModel.findOneAndUpdate(
-      {
-        _id: blogId,
-      },
-      {
-        $set: {
-          title: filterQuery.title,
-          body: filterQuery.body,
-          isPublished: true,
-          publishedAt: Date(),
-        },
-        $push: {
-          tags: {
-            $each: filterQuery.tags,
-          },
-          subcategory: {
-            $each: filterQuery.subcategory,
-          },
-        },
-      },
-      {
-        new: true,
+      const filterQuery = req.body
+      if (Object.entries(filterQuery).length == 0) {
+          return res.send({
+              status: false,
+              msg: "Please provide details to be updated"
+          })
       }
-    );
 
-    return res.status(200).send({
-      status: true,
-      msg: update_Blog,
-    });
+
+      const blogId = req.params.blogId;
+      const isValidBlog = await blogModel.findById(blogId)
+
+      if (isValidBlog.isDeleted == true) {
+          return res.status(404).send({
+              status: false,
+              msg: "Blog Already Deleted"
+          });
+      }
+
+      if (isValidBlog.isPublished == true) {
+          return res.status(404).send({
+              status: false,
+              msg: "Blog is already published"
+          });
+      }
+
+      if (isValid(filterQuery.title)) {
+          filterQuery['title'] = filterQuery.title.trim()
+      }
+      if (isValid(filterQuery.body)) {
+          filterQuery['body'] = filterQuery.body.trim()
+      }
+
+      if (isValid(filterQuery.tags)) {
+          const tag = filterQuery.tags.split(',').map(tag => tag);
+          filterQuery['tags'] = isValidBlog.tags.concat(tag)
+
+      }
+
+      if (isValid(filterQuery.subcategory)) {
+          const subcat = filterQuery.subcategory.split(',').map(subcat => subcat);
+          filterQuery['subcategory'] = isValidBlog.tags.concat(subcat)
+      }
+      filterQuery.isPublished = true;
+      filterQuery.publishedAt = Date();
+
+      const update_Blog = await blogModel.findOneAndUpdate({
+          _id: blogId
+      }, 
+      filterQuery,
+      {
+          new: true
+      });
+
+      return res.status(200).send({
+          status: true,
+          data: update_Blog
+      });
+
   } catch (err) {
-    return res.status(500).send({
-      status: false,
-      msg: err.message,
-    });
+      return res.status(500).send({
+          status: false,
+          msg: err.message
+      });
   }
 };
 
@@ -197,27 +172,25 @@ const deleteBlogByParams = async function (req, res) {
         msg: "Blog already deleted",
       });
     }
-    if (checkBlogId.isPublished == true) {
-      return res.status(404).send({
-        status: false,
-        msg: "Blog already published",
-      });
-    }
-    let updatedId = await blogModel.FindOneAndUpdate(
+    let updatedId = await blogModel.findOneAndUpdate(
       {
         _id: blogId,
       },
       {
         $set: {
           isDeleted: true,
-          deleteAt: Date(),
+          deleteAt:Date(),
         },
+      },
+      {
+        new: true,
       }
+      
     );
 
     return res.status(200).send({
       status: true,
-      msg: "Blog Deleted Succesfully",
+      data:updatedId,
     });
   } catch (err) {
     return res.status(500).send({
