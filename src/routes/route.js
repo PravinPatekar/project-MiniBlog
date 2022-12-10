@@ -22,4 +22,14 @@ router.delete("/blogs", middleware.authenticate, middleware.authorise2, blogCont
 
 
 
+router.all("*", function (req, res) {
+    res.status(404).send({
+        status: false,
+        message: "The Path you are requesting is not available !!"
+    })
+})
+
+
+
+
 module.exports = router;

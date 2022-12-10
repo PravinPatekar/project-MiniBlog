@@ -181,16 +181,13 @@ const deleteBlogByParams = async function (req, res) {
           isDeleted: true,
           deleteAt:Date(),
         },
-      },
-      {
-        new: true,
       }
       
     );
 
     return res.status(200).send({
       status: true,
-      data:updatedId,
+      msg :"blog deleted successfully",
     });
   } catch (err) {
     return res.status(500).send({
